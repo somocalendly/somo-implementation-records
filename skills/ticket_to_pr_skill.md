@@ -290,8 +290,8 @@ The run is done when the branch is on the remote, the create-pull-request link, 
 
 A later commit on the same branch runs the `CODEOWNERS` check again before it is pushed. Compare the whole branch diff, not only the new commit. A new outside owner is named in the chat, with the request prepared from that team's procedure page, before the person is told the pull request is ready.
 
-The ticket folder is disposable after that. The person may delete it. The agent does not delete it unless the person asks. Deleting the folder leaves the remote branch in place. Keep the implementation plan until release. That file is the input to the next skill.
+The ticket folder stays until release. The agent does not delete it unless the person asks. Deleting it before release leaves the remote branch in place and removes the folder the next skill reads.
 
 ## After release
 
-This run ends once `pullRequest` is in the plan. Release is later. After the ticket has been released, the person moves `<ticket>_implementation_plan.plan.md` into `/Users/somo.banerjee/Documents/projects/skills/DONE` and asks the agent to run `implementation_record_skill.md`. That skill archives the plan and updates the delivery log. It reads `branch` and `pullRequest` from the plan frontmatter. It is a separate run. This skill does not copy the plan or write the log.
+This run ends once `pullRequest` is in the plan. Release is later. After the ticket has been released, the person moves the ticket folder into `/Users/somo.banerjee/Documents/projects/skills/DONE` and asks the agent to run `implementation_record_skill.md`. The item in `DONE` is that folder. A plan file sitting directly in `DONE` is not a ticket. The record skill reads `<ticket>_implementation_plan.plan.md` inside the folder, including `branch` and `pullRequest`. It copies that plan into the archive. It does not copy the cloned repo that may sit beside the plan. It is a separate run. This skill does not copy the folder or write the log.
