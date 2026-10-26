@@ -74,6 +74,8 @@ The branch name is not one of those status facts. It is the `branch` frontmatter
 
 The pull request URL is the other field this run may write after approval. It is `pullRequest` in the frontmatter, added once in "Record the pull request," after the pull request exists. That write does not record approval, merge, or a published version. Those stay in the chat. The Implementation Record Skill reads `pullRequest` from the plan.
 
+When the same ticket later merges in another repo (consumer pin, version bump, publish follow-up), append that pull request under frontmatter `delivery` and in the opening note as delivery metadata. Each entry has `repo`, `branch`, and `pullRequest`. Keep the first repo’s `branch` and `pullRequest` as they are. Do not rewrite approved design sections. The archive skill lists every `delivery` entry in the implementation record.
+
 **Story points** are set while writing the plan, before Gate 1. They are frontmatter `storyPoints` (integer) and the `N SP` segment in the shareable opening note. The Implementation Record Skill reads `storyPoints` first. Do not change story points after Gate 1 unless the person asks and the change is recorded under `## Updates`.
 
 When the code and the approved plan disagree, stop and say what differs. Do not change the code past the plan, and do not change the plan to match the code.
@@ -282,7 +284,9 @@ After the person has created the pull request, write its URL into the plan. This
 
 In the ticket clone, for the branch named in `branch`, run `gh pr view --json url -q .url`. The URL looks like `https://github.com/<owner>/<repo>/pull/<number>`. When the person has pasted that URL, write the pasted URL.
 
-Add frontmatter `pullRequest` with that URL. Add `Pull request: <url>` to the opening note, on its own line beside `Branch:`. Change nothing else. Do not rewrite an approved section. Do not add `## Updates` for this write.
+Add frontmatter `pullRequest` with that URL. When this is the first pull request for the ticket, start frontmatter `delivery` with one object: `repo` (owner/name from `git remote`), `branch`, and `pullRequest`. Add `Pull request: <url>` to the opening note, on its own line beside `Branch:`. Change nothing else. Do not rewrite an approved section. Do not add `## Updates` for this write.
+
+When a later pull request in another repo completes delivery for the same ticket, append to frontmatter `delivery` only. Do not lengthen the opening note for extra repos; the implementation record lists every pull request for readers.
 
 Do not write the create-pull-request link (`/pull/new/<branch>`). If no pull request exists yet, stop and ask the person to create it from the Gate 3 link. Do not invent a number.
 
@@ -306,6 +310,7 @@ The ticket folder stays until release. The agent does not delete it unless the p
 | Repo | Yes | `Repo:` line in the opening note |
 | Branch | Yes | Frontmatter `branch` and `Branch:` line (Stage 2) |
 | Pull request | Yes | Frontmatter `pullRequest` and `Pull request:` line ("Record the pull request") |
+| Additional repos / pull requests | Yes, when they merge for this ticket | Frontmatter `delivery` list and opening-note lines (delivery metadata; same rules as `pullRequest`) |
 | Started | No | Filled at archive from GitHub (and optionally Jira In Dev) |
 | Pull request opened | No | Filled at archive from GitHub `createdAt` |
 | Released | No | Filled at archive from GitHub `mergedAt` (default shipped date) |

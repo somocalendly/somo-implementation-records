@@ -71,7 +71,7 @@ What was wrong and what users see now. Two or three sentences.
 - What you shipped, in plain English. One idea per bullet. Every bullet that describes a code change ends with the file path in parentheses.
 ```
 
-Every record uses this shape and this tone. Do not add sections. Do not write longer for a bigger ticket.
+Every record uses this shape and this tone. Do not add sections. Do not write longer for a bigger ticket unless **Multi-repo delivery** requires more **Work** bullets to list every shipped change.
 
 Fill the fields from the plan:
 
@@ -80,9 +80,10 @@ Fill the fields from the plan:
 - **Story points** is frontmatter `storyPoints` when set (written by `ticket_to_pr_skill.md` from Jira). Write `Story points: N` with no "SP" suffix. When frontmatter is missing, use the integer from the shareable opening note (`N SP`). When neither is present, write "not recorded".
 - Repo is the plan's `Repo:` line. When the plan does not name a GitHub repo, write "not named" and name the file the plan gives.
 - Branch is frontmatter `branch`. Pull request is frontmatter `pullRequest`. When a value is missing, write "not recorded".
+- When the ticket shipped through **more than one repo** (package change plus consumer pin, version bump, or any second merged pull request for the same ticket key), repeat `Repo`, `Branch`, and `Pull request` once per repo, in delivery order (library or package first, then consumers). Read extra entries from frontmatter `delivery` when present. When `delivery` is missing, discover them: repo checkouts sitting in the ticket folder in `Done` name likely repos; run one merged-PR search per repo (`gh pr list --repo <owner>/<repo> --state merged --search "<TICKET-KEY>"`). Include every merged pull request that belongs to this ticket. Do not treat out-of-scope language in the plan as permission to omit a pull request that actually merged for this key.
 - **Started**, **Pull request opened**, and **Released** are frontmatter `started`, `pullRequestOpened`, and `released`. When a field is in the plan, copy it to the record. When it is missing, derive it once using **Timeline lookups**, write it into the archived plan, then copy it to the record. Timeline lines are dates only. Do not explain how a date was found.
 - **What changed** comes from `## Goal`. Say what was broken and what users or the system see now. Two or three sentences. Plain language. Do not include `## Out of scope` or a "left alone" list.
-- **Work** is three to five bullets summarizing what shipped. Read `## Code changes` or `## Code change` and translate it into English. Write the way you would explain the work in a standup or a status update, not the way the plan names code.
+- **Work** summarizes **everything that shipped** for the ticket. Read `## Code changes` or `## Code change` in the plan and add bullets for every other merged pull request you listed (pins, lockfiles, patches, publish bumps). Use three to five bullets when one repo changed; use as many bullets as needed when several repos did, still one idea per bullet. Write the way you would explain the work in a standup or a status update, not the way the plan names code. File paths stay repo-relative to the repo that owns that bullet.
 
 **Work — always do this**
 
@@ -111,11 +112,25 @@ The middle bullet is optional. Use it only when the plan's out-of-scope list nam
 
 Do not add parent, squad, priority, status, proof, rollback, reviewers, or follow-up sections. Story points stay in the header bullet list only.
 
+## Multi-repo delivery
+
+One Jira ticket can merge in several repositories. The record must capture **all** of that work, not only the repo named in `Repo:`.
+
+Before writing the record, build the full delivery list (primary `branch` / `pullRequest` plus any other merged pull requests for this ticket key). Write every repo’s `Repo`, `Branch`, and `Pull request` lines in the header. **What changed** should describe the outcome invitees or hosts see, including consumer pins when those were required to ship the plan’s change.
+
+**Timeline** when multiple pull requests merged:
+
+- **Started** — earliest first-commit date among those pull requests.
+- **Pull request opened** — earliest `createdAt` among them.
+- **Released** — latest `mergedAt` among them (the date the last required piece merged). When only one pull request exists, use that merge date.
+
+Store the full list in archived plan frontmatter as `delivery`, a YAML list of objects with `repo`, `branch`, and `pullRequest`. One repo is a one-item list. Keep legacy `branch` and `pullRequest` as the first entry when the plan already had them. When archiving, write or backfill `delivery` from the record’s header; do not add extra opening-note prose for additional repos—the implementation record is where humans read multi-repo delivery.
+
 ## Timeline lookups
 
-Keep external calls small. One ticket should need at most one GitHub pull request read and at most one Jira issue read, and only while timeline frontmatter is still empty.
+Keep external calls small. One ticket should need at most **one GitHub pull request read per delivery pull request** and at most one Jira issue read, and only while timeline frontmatter is still empty.
 
-When `pullRequest` is set and any of `started`, `pullRequestOpened`, or `released` is missing, make **one** call:
+When `pullRequest` is set and any of `started`, `pullRequestOpened`, or `released` is missing, make **one** call per delivery pull request that still lacks dates:
 
 ```bash
 gh pr view <url-or-number> --json createdAt,mergedAt,commits
@@ -124,8 +139,9 @@ gh pr view <url-or-number> --json createdAt,mergedAt,commits
 From that response:
 
 - **Pull request opened** is `createdAt` when `pullRequestOpened` is missing.
-- **Released** is `mergedAt` when `released` is missing and the pull request is merged. That is the default shipped date. The ideal shipped time is when the repo’s production or release **workflow run finished successfully** for the merge commit. Do not list workflow runs unless the person asks to set Released from the workflow. When they ask, use one targeted lookup, then write `released` from that run’s completion time.
-- **Started** is the author date of the first commit in `commits` when `started` is missing.
+- **Released** is `mergedAt` when `released` is missing and the pull request is merged. With **multiple delivery pull requests**, **Released** is the **latest** merge date among them once each has been read. The ideal shipped time is when the repo’s production or release **workflow run finished successfully** for the merge commit. Do not list workflow runs unless the person asks to set Released from the workflow. When they ask, use one targeted lookup, then write `released` from that run’s completion time.
+- **Started** is the author date of the first commit in `commits` when `started` is missing. With multiple delivery pull requests, **Started** is the **earliest** first-commit date among them.
+- **Pull request opened** with multiple delivery pull requests is the **earliest** `createdAt` among them.
 
 When `started` is still missing and the person cares about **In Dev**, make **one** Jira read for the ticket key. **In Dev** is the earliest changelog entry whose status change sets `toString` to `In Dev`. **Started** is the earlier of branch first commit and In Dev. **Do not open Jira** when `started` is already in the plan or when first commit from the pull request read is enough for this ticket.
 
@@ -135,7 +151,7 @@ After deriving a date, add `started`, `pullRequestOpened`, and `released` to fro
 
 ## The index
 
-`index.md` is the registry and the scan list. One line per archived ticket, newest release first. The line is the key linked to that ticket's `implementation-record.md`, the title, the released date, and the pull request. When the pull request is not recorded, say so. Add a line when a ticket is recorded. Do not duplicate a key that is already there unless an explicit yes asked for a rewrite.
+`index.md` is the registry and the scan list. One line per archived ticket, newest release first. The line is the key linked to that ticket's `implementation-record.md`, the title, the released date, and the pull request URL or URLs. When several repos shipped, list every pull request URL on that line, comma-separated, in the same order as the record header. When the pull request is not recorded, say so. Add a line when a ticket is recorded. Do not duplicate a key that is already there unless an explicit yes asked for a rewrite.
 
 ```markdown
 - [SCH-4247](tickets/SCH-4247/implementation-record.md) — Align the date label with the time slots — released 2026-10-12 — pull request not recorded

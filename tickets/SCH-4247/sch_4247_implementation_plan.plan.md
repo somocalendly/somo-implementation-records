@@ -6,6 +6,10 @@ pullRequest: https://github.com/calendly/booking/pull/516
 started: 2026-10-13
 pullRequestOpened: 2026-10-13
 released: 2026-10-14
+delivery:
+  - repo: calendly/booking
+    branch: SCH-4247-align-date-label-with-slots
+    pullRequest: https://github.com/calendly/booking/pull/516
 todos:
   - id: align-subtitle
     content: Pad TimesHeaderRow with spacing0_5x left and spacing1x right when booking_app_redesign is on, after confirming those values on booking-kit 1.0.159

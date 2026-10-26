@@ -6,6 +6,10 @@ pullRequest: https://github.com/calendly/mf-publisher/pull/4103
 started: 2026-10-21
 pullRequestOpened: 2026-10-21
 released: 2026-10-23
+delivery:
+  - repo: calendly/mf-publisher
+    branch: SCH-4832-pre-publish-et-url
+    pullRequest: https://github.com/calendly/mf-publisher/pull/4103
 todos:
   - id: mirror-and-edit
     content: On a draft, keep the live URL preview, add the same Edit control the published event type already has, and never write the slug back into the name

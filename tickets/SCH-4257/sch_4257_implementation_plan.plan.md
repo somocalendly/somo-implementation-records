@@ -6,6 +6,10 @@ pullRequest: https://github.com/calendly/booking/pull/526
 started: 2026-10-17
 pullRequestOpened: 2026-10-17
 released: 2026-10-19
+delivery:
+  - repo: calendly/booking
+    branch: SCH-4257-center-enter-details
+    pullRequest: https://github.com/calendly/booking/pull/526
 todos:
   - id: center-step
     content: On the Panels DetailsForm in enter_details/index.js, add auto horizontal margins when booking_app_redesign is on and the viewport is desktop
