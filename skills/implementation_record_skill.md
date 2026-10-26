@@ -12,7 +12,7 @@ The inbox is `/Users/somo.banerjee/Documents/projects/Done`.
 
 A ticket is a directory whose name is a ticket key, such as `SCH-4247`. A plan file sitting directly in `Done` is not a ticket. A repo checkout sitting directly in `Done` is not a ticket.
 
-The archive is `/Users/somo.banerjee/Documents/projects/skills/somo-implementation-records`. The remote is `somocalendly/somo-implementation-records` on GitHub. Commit and push on the branch `working`. Do not open a pull request. This is a personal repo, not Calendly delivery.
+The archive is `/Users/somo.banerjee/Documents/projects/skills/somo-implementation-records`. The remote is `somocalendly/somo-implementation-records` on GitHub. Work on `main` only. Commit and push to `origin/main`. Do not create branches. Do not open a pull request.
 
 The skills to copy live in `/Users/somo.banerjee/Documents/projects/skills`, and only as `*_skill.md` files in that directory. Do not copy plans, `DONE`, or `2026 bug crush`.
 
@@ -151,7 +151,7 @@ Copy each `*_skill.md` from the skills project root into `skills/` in the archiv
 
 ## Commit and push
 
-After the records and the skill copies are written, commit them on `working` and push that branch.
+After the records and the skill copies are written, commit them on `main` and push to `origin`.
 
 Stage only the files this run changed. Use this commit message every time a ticket is archived:
 
@@ -171,10 +171,10 @@ When the run only refreshed skill copies and did not add or rewrite a ticket rec
 Update skills in implementation record archive.
 ```
 
-Do not update git config. Do not skip hooks. Do not force-push. Do not merge `working` into `main`. Do not open a pull request. Push `working` to `origin` and stop.
+Do not update git config. Do not skip hooks. Do not force-push. Do not open a pull request.
 
-If `working` is not the checked-out branch, stop. If the archive has changes this run did not make, stop and name them. Do not commit those.
+If `main` is not the checked-out branch, check out `main` before committing. If the archive has changes this run did not make, stop and name them. Do not commit those.
 
 ## In the chat
 
-Name each ticket recorded, the released date, and the record path. Name each ticket already recorded and left as it is. When a named ticket was already recorded, ask if they are sure they want it written again. Name each folder skipped, and why. Say that `working` was pushed, or that the run stopped before the commit.
+Name each ticket recorded, the released date, and the record path. Name each ticket already recorded and left as it is. When a named ticket was already recorded, ask if they are sure they want it written again. Name each folder skipped, and why. Say that `main` was pushed, or that the run stopped before the commit.
