@@ -74,6 +74,8 @@ The branch name is not one of those status facts. It is the `branch` frontmatter
 
 The pull request URL is the other field this run may write after approval. It is `pullRequest` in the frontmatter, added once in "Record the pull request," after the pull request exists. That write does not record approval, merge, or a published version. Those stay in the chat. The Implementation Record Skill reads `pullRequest` from the plan.
 
+**Story points** are set while writing the plan, before Gate 1. They are frontmatter `storyPoints` (integer) and the `N SP` segment in the shareable opening note. The Implementation Record Skill reads `storyPoints` first. Do not change story points after Gate 1 unless the person asks and the change is recorded under `## Updates`.
+
 When the code and the approved plan disagree, stop and say what differs. Do not change the code past the plan, and do not change the plan to match the code.
 
 The plan changes only when the person explicitly asks to change the plan. Append that change under `## Updates`. Do not rewrite `## Goal`, `## Design`, `## Code changes`, or any other approved section to match the new decision. Do not add `## Updates` while writing the plan. It appears only for a decision that changes after approval.
@@ -89,7 +91,7 @@ The agent then implements the approved plan as amended by those updates. A later
 
 ## Stage 1. Read the ticket
 
-1. Load the Jira issue (summary, description, acceptance notes, parent, linked issues, and comments).
+1. Load the Jira issue (summary, description, acceptance notes, parent, linked issues, comments, and **story points** when the project uses them).
 2. Name the repo. Clone a fresh copy into the ticket folder, as in "Where the code lives." Read that clone.
 3. Find the code path the bug actually hits. Read the files. Do not plan from the ticket text alone.
 4. Separate this ticket from nearby tickets that share a screen. Those stay out of scope unless the ticket says they are in scope.
@@ -106,8 +108,8 @@ This file is the engineering design document and the implementation plan. One ar
 
 Match this shape:
 
-- YAML frontmatter with `name`, `overview`, `branch`, `todos`, and `isProject: false`. `branch` is the exact git branch name.
-- A title and a short note that links the ticket, names the repo, states `Branch: \`<branch>\`` with the same value as frontmatter `branch`, and states the constraint that matters (version, flag, endpoint). The note says this file is the design document and the implementation plan.
+- YAML frontmatter with `name`, `overview`, `branch`, `storyPoints`, `todos`, and `isProject: false`. `branch` is the exact git branch name. `storyPoints` is the integer from Jira when the issue has story points. Omit `storyPoints` only when Jira has none (for example some backlog items).
+- A title and a **shareable opening note** on the next lines. It links the ticket and includes squad, sizing, status, and priority in parentheses, for example `(ET Scheduling · 3 SP · Ready For Dev · P2 · Low impact)`. The `N SP` segment must match frontmatter `storyPoints`. When there are no story points, use the ticket’s status line from Jira without inventing a number. Then name the repo, state `Branch: \`<branch>\`` with the same value as frontmatter `branch`, and state the constraint that matters (version, flag, endpoint). The note says this file is the design document and the implementation plan.
 - `## Goal` — what is broken and why, in the code that runs today.
 - `## Design` — the approach, why this one, what was rejected, and the blast radius. A diagram only when a sentence would hide how the pieces connect.
 - `## Out of scope`
@@ -118,7 +120,7 @@ Match this shape:
 - `## Sources` — ticket URL, every procedure page opened, and any comment or screenshot the plan relies on. If the procedure search found nothing, name the queries.
 - `## Review` — the external stakeholders and the policies this change follows, or "None" when the only stakeholder is the squad that owns the ticket.
 
-Choose `branch` while writing the plan. The form is `<TICKET>-<short-slug>`, as in `SCH-4257-date-label-alignment`. Stage 3 creates that branch and no other. A missing `branch` is not a finished plan. Leave `pullRequest` out until "Record the pull request." Do not put a placeholder there.
+Choose `branch` while writing the plan. The form is `<TICKET>-<short-slug>`, as in `SCH-4257-date-label-alignment`. Stage 3 creates that branch and no other. A missing `branch` is not a finished plan. Set `storyPoints` from Jira when present. A missing `storyPoints` when Jira has points is not a finished plan. Leave `pullRequest` out until "Record the pull request." Do not put a placeholder there. Leave `started`, `pullRequestOpened`, and `released` out. The Implementation Record Skill fills those after release.
 
 ### Written procedure
 
@@ -185,9 +187,9 @@ Skip this when the repo has no Storybook, or the change has nothing a person can
 
 ### When the input is a plan
 
-1. Read the plan file. Load the Jira issue it cites (summary, description, acceptance notes, parent, linked issues, and comments), including comments added after the plan was written.
+1. Read the plan file. Load the Jira issue it cites (summary, description, acceptance notes, parent, linked issues, comments, and story points when the project uses them), including comments added after the plan was written.
 2. Name the repo from the plan. Clone a fresh copy into the ticket folder if this run does not already have the clean default-branch clone from "Where the code lives." Read the code path the plan names in that clone, and the nearby path that still emits the same event or renders the same screen. Do not verify from the plan text alone. Before Gate 1, update the plan's checkout path to `<ticket-folder>/<repo>` when it still names a long-lived checkout. After Gate 1, say that in the chat and leave the file alone.
-3. Check the diagnosis, the design, the files to change, what must stay as it is, and the out-of-scope list against that code and the ticket. Check that frontmatter `branch` is the exact `<TICKET>-<short-slug>` name and that the opening note repeats it. If `branch` is missing, add it. Check that `## Testing` has a local part and a shared-environment part, that `## Post-production` names a proof, and that `## Rollback` names the undo and what it does not restore. If any of those is missing, add it. Check that `## Sources` lists the procedure pages for this kind of change. If it does not, search and edit the plan. Check `## Review` against `CODEOWNERS` and the owner's procedure page. A team name alone is not enough: the plan states the policies that page requires and which section satisfies each one. If that is missing, add it. When the Storybook rule applies, `## Testing` and `## Code changes` name the story. If they do not, add it. A sibling caller that fires the same event without the new property belongs in the plan, including the instruction to leave it unchanged. The shared-environment check names a real request and a proof, not "test in staging."
+3. Check the diagnosis, the design, the files to change, what must stay as it is, and the out-of-scope list against that code and the ticket. Check that frontmatter `branch` is the exact `<TICKET>-<short-slug>` name and that the opening note repeats it. If `branch` is missing, add it. Check that frontmatter `storyPoints` matches Jira when Jira has points, and that the shareable opening note’s `N SP` matches. If either is missing, add it before Gate 1. Check that `## Testing` has a local part and a shared-environment part, that `## Post-production` names a proof, and that `## Rollback` names the undo and what it does not restore. If any of those is missing, add it. Check that `## Sources` lists the procedure pages for this kind of change. If it does not, search and edit the plan. Check `## Review` against `CODEOWNERS` and the owner's procedure page. A team name alone is not enough: the plan states the policies that page requires and which section satisfies each one. If that is missing, add it. When the Storybook rule applies, `## Testing` and `## Code changes` name the story. If they do not, add it. A sibling caller that fires the same event without the new property belongs in the plan, including the instruction to leave it unchanged. The shared-environment check names a real request and a proof, not "test in staging."
 4. If the plan matches, say so and what was checked. If it does not, edit the plan file in place. State each gap in the reply. These edits are draft edits, before Gate 1. After Gate 1, do not edit the plan to close a gap. Follow "The approved plan."
 
 **Gate 1.** Stop. Link the plan file. Ask the person to approve it or mark it up. Do not edit application code on this turn. The fresh clone may already be in the ticket folder. Branching and edits wait for an explicit yes.
@@ -292,6 +294,26 @@ A later commit on the same branch runs the `CODEOWNERS` check again before it is
 
 The ticket folder stays until release. The agent does not delete it unless the person asks. Deleting it before release leaves the remote branch in place and removes the folder the next skill reads.
 
+## Implementation record handoff
+
+`implementation_record_skill.md` builds a short `implementation-record.md` from the plan. This skill should leave every **header and timeline field** the record needs in the plan file. It does not write the record itself.
+
+| Implementation record field | In the plan from this skill? | Where |
+| --- | --- | --- |
+| Title (`# KEY —` + H1) | Yes | Plan title (H1) |
+| Ticket URL | Yes | Shareable note and `## Sources` |
+| Story points | Yes | Frontmatter `storyPoints` and `N SP` in the shareable note (Stage 2) |
+| Repo | Yes | `Repo:` line in the opening note |
+| Branch | Yes | Frontmatter `branch` and `Branch:` line (Stage 2) |
+| Pull request | Yes | Frontmatter `pullRequest` and `Pull request:` line ("Record the pull request") |
+| Started | No | Filled at archive from GitHub (and optionally Jira In Dev) |
+| Pull request opened | No | Filled at archive from GitHub `createdAt` |
+| Released | No | Filled at archive from GitHub `mergedAt` (default shipped date) |
+| What changed | No | Written at archive from `## Goal` (English summary, not stored separately) |
+| Work bullets | No | Written at archive from `## Code changes` / tests (English summary) |
+
+Do not add timeline frontmatter in this skill unless the person explicitly asks. Issue type (Bug, Task, Story) is not part of the implementation record today.
+
 ## After release
 
-This run ends once `pullRequest` is in the plan. Release is later. After the ticket has been released, the person moves the ticket folder into `/Users/somo.banerjee/Documents/projects/Done` and asks the agent to run `implementation_record_skill.md`. The item in `Done` is that folder. A plan file sitting directly in `Done` is not a ticket. A repo checkout sitting directly in `Done` is not a ticket. The record skill reads `<ticket>_implementation_plan.plan.md` inside the folder, including `branch` and `pullRequest`. It copies that plan into the archive. It does not copy the cloned repo that may sit beside the plan. It is a separate run. This skill does not copy the folder or write the log.
+This run ends once `pullRequest` is in the plan. Release is later. After the ticket has been released, the person moves the ticket folder into `/Users/somo.banerjee/Documents/projects/Done` and asks the agent to run `implementation_record_skill.md`. The item in `Done` is that folder. A plan file sitting directly in `Done` is not a ticket. A repo checkout sitting directly in `Done` is not a ticket. The record skill reads `<ticket>_implementation_plan.plan.md` inside the folder, including `branch`, `storyPoints`, and `pullRequest`. It copies that plan into the archive and may add timeline dates to the archived copy only. It does not copy the cloned repo that may sit beside the plan. It is a separate run. This skill does not copy the folder or write the log.

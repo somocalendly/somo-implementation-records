@@ -77,7 +77,7 @@ Fill the fields from the plan:
 
 - The title is `# <TICKET-KEY> —` plus the plan's H1.
 - The ticket link is the browse link in the plan. When the plan has none, use `https://calendlyapp.atlassian.net/browse/<folder name>`.
-- **Story points** is the integer from the plan's shareable opening note (`N SP`, for example `3 SP` in `ET Scheduling · 3 SP · Ready For Dev`). Write `Story points: N` with no "SP" suffix. When frontmatter `storyPoints` is set, use that. When neither is present, write "not recorded".
+- **Story points** is frontmatter `storyPoints` when set (written by `ticket_to_pr_skill.md` from Jira). Write `Story points: N` with no "SP" suffix. When frontmatter is missing, use the integer from the shareable opening note (`N SP`). When neither is present, write "not recorded".
 - Repo is the plan's `Repo:` line. When the plan does not name a GitHub repo, write "not named" and name the file the plan gives.
 - Branch is frontmatter `branch`. Pull request is frontmatter `pullRequest`. When a value is missing, write "not recorded".
 - **Started**, **Pull request opened**, and **Released** are frontmatter `started`, `pullRequestOpened`, and `released`. When a field is in the plan, copy it to the record. When it is missing, derive it once using **Timeline lookups**, write it into the archived plan, then copy it to the record. Timeline lines are dates only. Do not explain how a date was found.
@@ -149,7 +149,9 @@ Copy each `*_skill.md` from the skills project root into `skills/` in the archiv
 
 ## Commit and push
 
-After the records and the skill copies are written, commit them on `main` and push to `origin`.
+**Review gate.** After the record, archived plan metadata, and `index.md` are ready, stop before `git commit`. Show the full `implementation-record.md` in chat and say the run stopped for review. Do not commit or push on the same turn unless the person explicitly asks (for example "commit and push"). Preparing index and plan copies locally is fine; staging is optional until they approve.
+
+When they ask to commit, commit on `main` and push to `origin`.
 
 Stage only the files this run changed. Use this commit message every time a ticket is archived:
 
@@ -169,10 +171,18 @@ When the run only refreshed skill copies and did not add or rewrite a ticket rec
 Update skills in implementation record archive.
 ```
 
+When one commit on `main` includes both a new or rewritten ticket record and updated skill copies, use two sentences in one message:
+
+```text
+Add implementation record for SCH-1234. Update skills in implementation record archive.
+```
+
+List every ticket key in the first sentence when more than one ticket is archived.
+
 Do not update git config. Do not skip hooks. Do not force-push. Do not open a pull request.
 
 If `main` is not the checked-out branch, check out `main` before committing. If the archive has changes this run did not make, stop and name them. Do not commit those.
 
 ## In the chat
 
-Name each ticket recorded, the released date, and the record path. Name each ticket already recorded and left as it is. When a named ticket was already recorded, ask if they are sure they want it written again. Name each folder skipped, and why. Say that `main` was pushed, or that the run stopped before the commit.
+Name each ticket recorded, the released date, and the record path. Name each ticket already recorded and left as it is. When a named ticket was already recorded, ask if they are sure they want it written again. Name each folder skipped, and why. When the review gate applies, say the run stopped before commit and wait for explicit approval. After a commit, say that `main` was pushed.
