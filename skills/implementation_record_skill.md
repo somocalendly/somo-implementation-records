@@ -51,6 +51,7 @@ Use this shape:
 # SCH-4247 — Align the date label with the time slots
 
 - Ticket: https://calendlyapp.atlassian.net/browse/SCH-4247
+- Story points: 2
 - Repo: `calendly/booking`
 - Branch: SCH-4247-date-label-alignment
 - Pull request: https://github.com/calendly/booking/pull/1
@@ -68,8 +69,6 @@ What was wrong and what users see now. Two or three sentences.
 ## Work
 
 - What you shipped, in plain English. One idea per bullet. Every bullet that describes a code change ends with the file path in parentheses.
-
-Plan: tickets/SCH-4247/sch_4247_implementation_plan.plan.md
 ```
 
 Every record uses this shape and this tone. Do not add sections. Do not write longer for a bigger ticket.
@@ -78,6 +77,7 @@ Fill the fields from the plan:
 
 - The title is `# <TICKET-KEY> —` plus the plan's H1.
 - The ticket link is the browse link in the plan. When the plan has none, use `https://calendlyapp.atlassian.net/browse/<folder name>`.
+- **Story points** is the integer from the plan's shareable opening note (`N SP`, for example `3 SP` in `ET Scheduling · 3 SP · Ready For Dev`). Write `Story points: N` with no "SP" suffix. When frontmatter `storyPoints` is set, use that. When neither is present, write "not recorded".
 - Repo is the plan's `Repo:` line. When the plan does not name a GitHub repo, write "not named" and name the file the plan gives.
 - Branch is frontmatter `branch`. Pull request is frontmatter `pullRequest`. When a value is missing, write "not recorded".
 - **Started**, **Pull request opened**, and **Released** are frontmatter `started`, `pullRequestOpened`, and `released`. When a field is in the plan, copy it to the record. When it is missing, derive it once using **Timeline lookups**, write it into the archived plan, then copy it to the record. Timeline lines are dates only. Do not explain how a date was found.
@@ -109,9 +109,7 @@ Fill the fields from the plan:
 
 The middle bullet is optional. Use it only when the plan's out-of-scope list names something a reader might think you touched. Keep it one short sentence.
 
-- End with one `Plan:` line pointing at the archived plan file. Do not paste from the plan.
-
-Do not add parent, squad, priority, status, proof, rollback, reviewers, or follow-up sections.
+Do not add parent, squad, priority, status, proof, rollback, reviewers, or follow-up sections. Story points stay in the header bullet list only.
 
 ## Timeline lookups
 
