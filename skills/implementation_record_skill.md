@@ -12,7 +12,7 @@ The inbox is `/Users/somo.banerjee/Documents/projects/Done`.
 
 A ticket is a directory whose name is a ticket key, such as `SCH-4247`. A plan file sitting directly in `Done` is not a ticket. A repo checkout sitting directly in `Done` is not a ticket.
 
-The archive is `/Users/somo.banerjee/Documents/projects/skills/somo-implementation-records`. The remote is `calendly/somo-implementation-records`. Work on the branch `working`. Do not commit to `main`.
+The archive is `/Users/somo.banerjee/Documents/projects/skills/somo-implementation-records`. The remote is `somocalendly/somo-implementation-records` on GitHub. Commit and push on the branch `working`. Do not open a pull request. This is a personal repo, not Calendly delivery.
 
 The skills to copy live in `/Users/somo.banerjee/Documents/projects/skills`, and only as `*_skill.md` files in that directory. Do not copy plans, `DONE`, or `2026 bug crush`.
 
@@ -171,7 +171,7 @@ When the run only refreshed skill copies and did not add or rewrite a ticket rec
 Update skills in implementation record archive.
 ```
 
-Do not update git config. Do not skip hooks. Do not force-push. Do not merge `working` into `main`. Do not open a pull request.
+Do not update git config. Do not skip hooks. Do not force-push. Do not merge `working` into `main`. Do not open a pull request. Push `working` to `origin` and stop.
 
 If `working` is not the checked-out branch, stop. If the archive has changes this run did not make, stop and name them. Do not commit those.
 
