@@ -31,7 +31,7 @@ When the person names a ticket that is already in the index, stop on that ticket
 Skip a folder and say why:
 
 - The folder name is not a ticket key.
-- The folder contains no implementation plan. Do not read the clone to fill the gap. `SCH-4682` is such a folder.
+- The folder contains no implementation plan **and** no matching plan exists under **Plan fallback** below.
 - The folder contains more than one implementation plan.
 - The plan's ticket key and the folder name disagree. Name both. Do not pick one.
 
@@ -40,6 +40,15 @@ Skip a folder and say why:
 Copy `<ticket>_implementation_plan.plan.md` into `tickets/<TICKET>/` into the archive. Delivery metadata in frontmatter and the opening note may be added or updated after copy, as in **Timeline lookups**. Do not change approved design sections.
 
 Do not copy a cloned repo that sits beside the plan. `SCH-4248` contains `booking` and `js-packages`. `SCH-4956` contains `calendly`. `SCH-5039` contains `mf-publisher`. Those checkouts stay in `Done`.
+
+## Plan fallback
+
+When a ticket folder in `Done` has no `<ticket>_implementation_plan.plan.md`, look once in these directories only (lowercase ticket key in the filename):
+
+- `/Users/somo.banerjee/Documents/projects/skills/2026 bug crush/`
+- `/Users/somo.banerjee/Documents/projects/skills/breached - 10-12-26/`
+
+Example: `sch_4682_implementation_plan.plan.md` for folder `SCH-4682`. When a file matches, copy it into the ticket folder in `Done`, then continue the run. Do not copy from `DONE/`, loose files at the skills root, or other folders. When nothing matches, skip the folder and say why.
 
 ## The record
 
@@ -165,9 +174,11 @@ Copy each `*_skill.md` from the skills project root into `skills/` in the archiv
 
 ## Commit and push
 
-**Review gate.** After the record, archived plan metadata, and `index.md` are ready, stop before `git commit`. Show the full `implementation-record.md` in chat and say the run stopped for review. Do not commit or push on the same turn unless the person explicitly asks (for example "commit and push"). Preparing index and plan copies locally is fine; staging is optional until they approve.
+**Review gate (interactive runs).** After the record, archived plan metadata, and `index.md` are ready, stop before `git commit`. Show the full `implementation-record.md` in chat and say the run stopped for review. Do not commit or push on the same turn unless the person explicitly asks (for example "commit and push"). Preparing index and plan copies locally is fine; staging is optional until they approve.
 
-When they ask to commit, commit on `main` and push to `origin`.
+**Scheduled automation runs** skip the review gate. See **Weekly Done inbox automation** at the end of this file.
+
+When they ask to commit, or when a scheduled automation run finishes successfully, commit on `main` and push to `origin`.
 
 Stage only the files this run changed. Use this commit message every time a ticket is archived:
 
@@ -202,3 +213,22 @@ If `main` is not the checked-out branch, check out `main` before committing. If 
 ## In the chat
 
 Name each ticket recorded, the released date, and the record path. Name each ticket already recorded and left as it is. When a named ticket was already recorded, ask if they are sure they want it written again. Name each folder skipped, and why. When the review gate applies, say the run stopped before commit and wait for explicit approval. After a commit, say that `main` was pushed.
+
+## Weekly Done inbox automation
+
+Use this when a **Cursor Automation** (or the person) says to run the weekly archive. It is the same skill with these overrides:
+
+**Where to run.** The automation must execute on the Mac that holds the Done inbox and skills paths (`/Users/somo.banerjee/Documents/projects/Done` and `/Users/somo.banerjee/Documents/projects/skills`). A cloud-only checkout of `somocalendly/somo-implementation-records` alone is not enough.
+
+**Schedule.** Saturday at 8:00 PM in the person’s local timezone (confirm in the Automations cron picker).
+
+**Each run:**
+
+1. Read `index.md` in `/Users/somo.banerjee/Documents/projects/skills/somo-implementation-records`.
+2. For every ticket folder in `/Users/somo.banerjee/Documents/projects/Done`, apply **Which tickets**, **Plan fallback**, **Multi-repo delivery**, and the rest of this skill.
+3. Process **all** new tickets in one run (not one chat turn per ticket). Refresh skill copies into `skills/` when the source files changed.
+4. **Do not stop for review.** When at least one new ticket was archived, commit on `main` and push to `origin` with the normal commit messages. When nothing was new, push only if skill copies changed (`Update skills in implementation record archive.`). When there was nothing to do, do not commit.
+5. **Success notification.** Post a short summary: tickets archived (keys + released dates), tickets skipped (and why), or “no new Done tickets.” Use the automation’s Slack (or email) action.
+6. **Errors.** If a ticket cannot be archived (missing PR, git push failed, ambiguous plan, index conflict, unexpected repo state), **stop before commit**, do not push a partial archive, and send a failure notification that names the ticket, the error, and asks the person to fix or run the skill interactively. Include what was prepared locally if anything was written.
+
+The automation prompt lives in `somo-implementation-records/automations/weekly-done-inbox.md` (copy into the Cursor Automation instructions).
