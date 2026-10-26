@@ -60,6 +60,7 @@ Use this shape:
 # SCH-4247 — Align the date label with the time slots
 
 - Ticket: https://calendlyapp.atlassian.net/browse/SCH-4247
+- Type: Bug
 - Story points: 2
 - Repo: `calendly/booking`
 - Branch: SCH-4247-date-label-alignment
@@ -86,6 +87,7 @@ Fill the fields from the plan:
 
 - The title is `# <TICKET-KEY> —` plus the plan's H1.
 - The ticket link is the browse link in the plan. When the plan has none, use `https://calendlyapp.atlassian.net/browse/<folder name>`.
+- **Type** is the Jira issue type (Bug, Story, Task, Sub-task, Epic, etc.). Use frontmatter `issueType` when set (written by `ticket_to_pr_skill.md` from Jira). Write `Type: <name>` with the same spelling as Jira (for example `Sub-task`). When frontmatter is missing, read the shareable opening note: the issue type is the segment after the squad name when that segment is not `N SP` and matches a Jira issue type name from the plan’s shareable examples or `issueType` on other tickets. When neither frontmatter nor a clear shareable segment is present, write "not recorded".
 - **Story points** is frontmatter `storyPoints` when set (written by `ticket_to_pr_skill.md` from Jira). Write `Story points: N` with no "SP" suffix. When frontmatter is missing, use the integer from the shareable opening note (`N SP`). When neither is present, write "not recorded".
 - Repo is the plan's `Repo:` line. When the plan does not name a GitHub repo, write "not named" and name the file the plan gives.
 - Branch is frontmatter `branch`. Pull request is frontmatter `pullRequest`. When a value is missing, write "not recorded".
@@ -119,7 +121,7 @@ Fill the fields from the plan:
 
 The middle bullet is optional. Use it only when the plan's out-of-scope list names something a reader might think you touched. Keep it one short sentence.
 
-Do not add parent, squad, priority, status, proof, rollback, reviewers, or follow-up sections. Story points stay in the header bullet list only.
+Do not add parent, squad, priority, status, proof, rollback, reviewers, or follow-up sections. Type and story points stay in the header bullet list only.
 
 ## Multi-repo delivery
 
