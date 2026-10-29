@@ -2,6 +2,7 @@
 
 Newest release first. One line per ticket: key, title, released date, pull request.
 
+- [SCH-4908](tickets/SCH-4908/implementation-record.md) — Keyboard access for overflow submenus — released 2026-10-29 — https://github.com/calendly/mf-publisher/pull/4121
 - [SCH-5125](tickets/SCH-5125/implementation-record.md) — Fork staging sandboxes from the booking Rollout — released 2026-10-26 — https://github.com/calendly/booking/pull/543
 - [SCH-4832](tickets/SCH-4832/implementation-record.md) — Let a draft event type URL be edited before publish — released 2026-10-23 — https://github.com/calendly/mf-publisher/pull/4103
 - [SCH-4682](tickets/SCH-4682/implementation-record.md) — Fix description spacing and dark mode — released 2026-10-23 — https://github.com/calendly/mf-publisher/pull/4115
