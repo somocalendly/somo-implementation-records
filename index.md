@@ -3,6 +3,7 @@
 Newest release first. One line per ticket: key, title, released date, pull request.
 
 - [SCH-4255](tickets/SCH-4255/implementation-record.md) — Align the month title and the selected date with the profile back link — released 2026-10-30 — https://github.com/calendly/booking/pull/542
+- [SCH-4740](tickets/SCH-4740/implementation-record.md) — Confirmations tab font token — released 2026-10-30 — https://github.com/calendly/mf-publisher/pull/4123
 - [SCH-4261](tickets/SCH-4261/implementation-record.md) — Make Your schedule open the explainer — released 2026-10-30 — https://github.com/calendly/booking/pull/547
 - [SCH-4912](tickets/SCH-4912/implementation-record.md) — Skip the leave modal after a confirmed delete — released 2026-10-29 — https://github.com/calendly/mf-publisher/pull/4122
 - [SCH-4908](tickets/SCH-4908/implementation-record.md) — Keyboard access for overflow submenus — released 2026-10-29 — https://github.com/calendly/mf-publisher/pull/4121
