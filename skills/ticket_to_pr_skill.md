@@ -56,7 +56,7 @@ Three stops. Each one ends the turn. The agent shows the artifact and asks for a
 
 | Gate | When | What the person checks | Agent does until yes |
 | --- | --- | --- | --- |
-| 1. Plan | After the plan is written or verified, before any code edit | The design, what is out of scope, stakeholders and their policies, the local and shared-environment test plan, post-production verification, rollback, the procedure pages in `## Sources`, and any place the plan refuses a pattern the ticket named | Does not edit the clone |
+| 1. Plan | After the plan is written or verified, before any code edit | The design, what is out of scope, stakeholders and their policies, engineer `## Testing` and (when required) the separate Signadot test plan file, post-production verification, rollback, the procedure pages in `## Sources`, and any place the plan refuses a pattern the ticket named | Does not edit the clone |
 | 2. Diff | After implementation and verification, before `git commit` and `git push` | Every file in the diff, and the team `CODEOWNERS` assigns to each one | Does not commit or push |
 | 3. Pull request | After the branch is on the remote, the create-pull-request link is in chat, and the title and body are in chat | The person opens the link, creates the pull request, and sends any outside review the diff's `CODEOWNERS` check names | Does not open the pull request, request reviewers, or post to Slack |
 
@@ -138,17 +138,51 @@ A file in the repo is an example. It is not the rule. If the ticket names a file
 
 `## Code changes` names the page and the step for each step that comes from a procedure. A person who does not know the rule should be able to see which requirement it satisfies.
 
-The plan states the verification the bug needs. For a UI bug behind a feature flag, the shared-environment check includes how to tell the flag is on for that page load (response field, visible copy, or both). A screenshot of the flag-off page does not verify the change.
+While writing the plan, decide whether a separate Signadot test plan is required (see **Engineer and QA boundary**). When it is, run or follow `signadot_test_plan_skill.md` so `sch_<key>_test_plan.plan.md` exists before QA handoff; the implementation plan still describes flags and behavior in **Goal** and **Design**, but not step-by-step staging clicks.
+
+For a UI bug behind a feature flag, document in **Design** how to tell the flag is on for the affected path (response field, visible copy, or both). Flag verification for QA belongs in the test plan, not in engineer Signadot steps inside the implementation plan.
 
 Do the external-review, Storybook, and testing checks below before the plan is finished. Their results go into `## Design`, `## Code changes`, `## Testing`, and `## Review`. A plan that names a team, a channel, a story, or a production check only at Gate 3 is not finished.
 
+### Engineer and QA boundary
+
+Two deliverables when staging browser verification is required:
+
+| Deliverable | Audience | Filename |
+| --- | --- | --- |
+| Implementation plan | Engineer | `sch_<key>_implementation_plan.plan.md` |
+| Signadot test plan | QA only | `sch_<key>_test_plan.plan.md` |
+
+The engineer reads and executes the implementation plan. The QA tester reads only the test plan and runs it through the Claude `signadot-browser-test` skill. Neither role needs the other artifact for their work.
+
+Write the test plan with `signadot_test_plan_skill.md`. Attach it to Jira when the pull request exists (or when the person asks). Do not put Signadot browser steps, sandbox setup, staging account prep, or “hand off to QA” checklists inside the implementation plan. Do not name individual testers in either file.
+
+**When a separate test plan is required**
+
+- The bug or feature is proven only on a running staging page (layout, focus, click behavior, measurements, cross-app UI), and unit tests or Storybook cannot distinguish fixed from unfixed code alone.
+- The ticket is labeled for QA browser verification, or the person asks for a Signadot test plan.
+
+**When no test plan is required**
+
+- Request specs, unit or component tests, Storybook, or Chromatic fully prove the change.
+- The change is workflow, config, or backend-only with no separate staging UI proof.
+
 ### Testing, release, and rollback
 
-`## Testing` has two parts.
+`## Testing` has one primary subsection for the engineer: **`### Engineer: complete the code`**. Everything the agent runs before Gate 2 belongs there: commands, new test assertions, Storybook stories, Chromatic as the visual check on the pull request, and a local running-app check when the Storybook rule requires exercising the real app before Gate 2.
 
-Local is what the agent runs before Gate 2, and what an engineer can run on a checkout. Name the command, what the new example asserts, the Storybook story when that rule applies, and the running-app check. A unit or component run is not the running-app check.
+Do **not** add a `### Shared environment` subsection that assigns Signadot browser steps to the engineer when a separate test plan exists. Sandbox label, Signadot routing, staging login, choosing the starting URL, and executing numbered UI checks live only in `sch_<key>_test_plan.plan.md`.
 
-Shared environment is what the engineer and QA run after the pull request exists and before review. Name the tool this repo uses, the request or screen, and the proof. For `calendly/calendly`, deploy a Signadot sandbox by putting the `staging-overlay-sandbox` label on the pull request (`.github/workflows/sandbox-deploy.yml`), then route staging with the Signadot extension ([How to Signadot](https://calendlyapp.atlassian.net/wiki/spaces/ainc/pages/5908987907/How+to+Signadot)). Use Postman when an HTTP call is what proves the change. Include method, path, the body fields that matter, and where the proof shows up (log line, `identify_data`, response field). The booking response is not proof of an identify trait. Chromatic is the shared-environment check for a Storybook story. Do not name a tool the repo does not use. Include how to tell this is the path under test.
+End the engineer subsection with an explicit stopping line: after the named automated checks and CI pass and a teammate has code-reviewed the pull request, the engineer is done. State whether Signadot or QA handoff is required:
+
+- **QA handoff:** “The engineer does not add the sandbox label, configure Signadot, choose a staging page, or perform the browser checks. QA setup and execution are outside this implementation plan.” Do not duplicate the test plan’s checks here.
+- **No QA handoff:** “No Signadot or QA handoff is required.” Say what automated proof replaced staging browser work.
+
+When Chromatic or Postman is the shared-environment proof and the engineer runs it on the pull request, keep those steps inside **`### Engineer: complete the code`**, not under a Signadot handoff.
+
+For infra or workflow tickets where the engineer verifies sandbox **publish** (green workflow, deploy comment) but not product UI, describe that publish proof under **`### Engineer: complete the code`**. Product UI on Signadot still gets a separate test plan when QA must click through the app.
+
+Signadot references for authors: [How to Signadot](https://calendlyapp.atlassian.net/wiki/spaces/ainc/pages/5908987907/How+to+Signadot). Test plan shape: `signadot_test_plan_skill.md` and `signadot-browser-test/references/test-plan-format.md`.
 
 `## Post-production` is the check after merge, publish, or deploy. Name the event that makes it possible, the screen or request, and the proof. The agent does not run this before the change is in production. "Verify in production" with no proof is not a plan.
 
@@ -193,7 +227,7 @@ Skip this when the repo has no Storybook, or the change has nothing a person can
 
 1. Read the plan file. Load the Jira issue it cites (summary, description, acceptance notes, parent, linked issues, comments, and story points when the project uses them), including comments added after the plan was written.
 2. Name the repo from the plan. Clone a fresh copy into the ticket folder if this run does not already have the clean default-branch clone from "Where the code lives." Read the code path the plan names in that clone, and the nearby path that still emits the same event or renders the same screen. Do not verify from the plan text alone. Before Gate 1, update the plan's checkout path to `<ticket-folder>/<repo>` when it still names a long-lived checkout. After Gate 1, say that in the chat and leave the file alone.
-3. Check the diagnosis, the design, the files to change, what must stay as it is, and the out-of-scope list against that code and the ticket. Check that frontmatter `branch` is the exact `<TICKET>-<short-slug>` name and that the opening note repeats it. If `branch` is missing, add it. Check that frontmatter `issueType` matches Jira and appears in the shareable opening note. If either is missing, add it before Gate 1. Check that frontmatter `storyPoints` matches Jira when Jira has points, and that the shareable opening note’s `N SP` matches. If either is missing, add it before Gate 1. Check that `## Testing` has a local part and a shared-environment part, that `## Post-production` names a proof, and that `## Rollback` names the undo and what it does not restore. If any of those is missing, add it. Check that `## Sources` lists the procedure pages for this kind of change. If it does not, search and edit the plan. Check `## Review` against `CODEOWNERS` and the owner's procedure page. A team name alone is not enough: the plan states the policies that page requires and which section satisfies each one. If that is missing, add it. When the Storybook rule applies, `## Testing` and `## Code changes` name the story. If they do not, add it. A sibling caller that fires the same event without the new property belongs in the plan, including the instruction to leave it unchanged. The shared-environment check names a real request and a proof, not "test in staging."
+3. Check the diagnosis, the design, the files to change, what must stay as it is, and the out-of-scope list against that code and the ticket. Check that frontmatter `branch` is the exact `<TICKET>-<short-slug>` name and that the opening note repeats it. If `branch` is missing, add it. Check that frontmatter `issueType` matches Jira and appears in the shareable opening note. If either is missing, add it before Gate 1. Check that frontmatter `storyPoints` matches Jira when Jira has points, and that the shareable opening note’s `N SP` matches. If either is missing, add it before Gate 1. Check that `## Testing` has **`### Engineer: complete the code`**, an explicit engineer stopping line (with or without QA handoff), and no Signadot browser steps when a separate test plan is required. When QA handoff applies, check that `sch_<key>_test_plan.plan.md` exists in the ticket folder or will be written before the pull request. Check that `## Post-production` names a proof, and that `## Rollback` names the undo and what it does not restore. If any of those is missing, add it. Check that `## Sources` lists the procedure pages for this kind of change. If it does not, search and edit the plan. Check `## Review` against `CODEOWNERS` and the owner's procedure page. A team name alone is not enough: the plan states the policies that page requires and which section satisfies each one. If that is missing, add it. When the Storybook rule applies, `## Testing` and `## Code changes` name the story. If they do not, add it. A sibling caller that fires the same event without the new property belongs in the plan, including the instruction to leave it unchanged. When no separate test plan is required, automated or Chromatic proof is named concretely, not "test in staging."
 4. If the plan matches, say so and what was checked. If it does not, edit the plan file in place. State each gap in the reply. These edits are draft edits, before Gate 1. After Gate 1, do not edit the plan to close a gap. Follow "The approved plan."
 
 **Gate 1.** Stop. Link the plan file. Ask the person to approve it or mark it up. Do not edit application code on this turn. The fresh clone may already be in the ticket folder. Branching and edits wait for an explicit yes.
@@ -212,7 +246,7 @@ After Gate 1 is approved, and only inside the fresh clone in the ticket folder:
 
 Run the local part of `## Testing`.
 
-For a web UI, layout, styling, routing, client state, or rendered-data change, exercise the affected flow before Gate 2, on the running app, the way a user would. A single screenshot of the screen is not verification. Check the flag-on path and the flag-off path when both exist, and the empty or error state when the change can reach it. Do not wait for the pull request to do this. The shared-environment steps in `## Testing` are the engineer's check after the pull request exists. `## Post-production` runs after merge, publish, or deploy. The agent does not claim either one ran early. The agent still runs the local flow first, and says so at Gate 2.
+For a web UI, layout, styling, routing, client state, or rendered-data change, exercise the affected flow before Gate 2 on the running app when `## Testing` requires a local running-app check. A single screenshot is not verification. Check the flag-on path and the flag-off path when both exist, and the empty or error state when the change can reach it. When a separate Signadot test plan exists for the ticket, the engineer does not run Signadot staging browser checks; say at Gate 2 that QA owns those via the test plan. `## Post-production` runs after merge, publish, or deploy. The agent does not claim post-production ran early.
 
 Chromatic on the pull request snapshots the Storybook story. Say at Gate 2 whether that story was opened locally. Do not treat the Cypress run as that snapshot.
 
@@ -270,7 +304,12 @@ https://calendlyapp.atlassian.net/browse/SCH-1234
 - [Translations](https://calendlyapp.atlassian.net/wiki/spaces/EN/pages/2180776092/Crowdin)
 ```
 
-Use the ticket's real key. QA steps come from the shared-environment part of `## Testing`, not from the template's "Be sure to test one".
+Use the ticket's real key.
+
+For the **QA** section of the pull request body:
+
+- When `sch_<key>_test_plan.plan.md` exists, use two checklist items: attach or confirm the test plan on the Jira ticket, and note that QA runs it with Signadot browser-test after the sandbox is up. Do not paste the numbered checks into the PR body.
+- When no test plan exists, derive QA steps from the engineer automated proof in `## Testing` (Chromatic, Postman, or explicit staging proof the engineer owns). Do not use the template's generic "Be sure to test one" line.
 
 Before writing the pull request text, compare every file in the branch diff with `CODEOWNERS`. The last matching pattern wins. When that check finds an outside team `## Review` does not name, prepare the request as in External review. Do not write that no outside team is required.
 
@@ -278,7 +317,7 @@ The body includes what `## Review` says the pull request must contain. When `## 
 
 The agent does not request the team, does not post the message, and does not wait for the review.
 
-**Gate 3.** Stop. The person clicks the link, pastes the title and body, requests the team, and posts the message when there is one. The agent does not run `gh pr create`, does not request reviewers, and does not post to Slack. Do not write `pullRequest` on this turn. The pull request does not exist yet.
+**Gate 3.** Stop. The person clicks the link, pastes the title and body, requests the team, and posts the message when there is one. When a Signadot test plan file exists in the ticket folder, remind the person to attach `sch_<key>_test_plan.plan.md` to Jira and to hand QA tickets to the tester as soon as the pull request is open, without waiting for code review. The agent does not run `gh pr create`, does not request reviewers, and does not post to Slack. Do not write `pullRequest` on this turn. The pull request does not exist yet.
 
 ## Record the pull request
 

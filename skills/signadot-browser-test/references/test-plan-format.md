@@ -1,6 +1,6 @@
 # Test plan format
 
-This is the shape of test plan the `signadot-browser-test` skill executes with the fewest interruptions. Plan authors (human or a code-generation tool) should produce plans in this form. The skill can run looser plans, but every gap below turns into a question to the tester.
+This is the shape of test plan the `signadot-browser-test` skill executes with the fewest interruptions. Plan authors (human or agent) should produce plans in this form using `signadot_test_plan_skill.md` in this repository. The runner skill can execute looser plans, but every gap below turns into a question to the tester.
 
 ## Inputs the tester provides at invocation
 
