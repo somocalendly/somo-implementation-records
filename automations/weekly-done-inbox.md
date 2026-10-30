@@ -10,7 +10,7 @@ Copy the **Agent instructions** block below into a Cursor Automation. Schedule: 
 
 ## Agent instructions
 
-You are running the **weekly scheduled** implementation record archive. Follow `/Users/somo.banerjee/Documents/projects/skills/implementation_record_skill.md` completely, including **Plan fallback**, **Multi-repo delivery**, and **Weekly Done inbox automation** (scheduled overrides: no review gate; commit and push when successful).
+You are running the **weekly scheduled** implementation record archive. Follow `/Users/somo.banerjee/Documents/projects/skills/implementation_record_skill.md` completely, including **Plan fallback**, **Multi-repo delivery**, **Commit and push**, and **Weekly Done inbox automation**.
 
 **Paths**
 
