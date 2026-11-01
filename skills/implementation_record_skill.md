@@ -69,7 +69,7 @@ Confirmation must name the ticket or clearly mean it (“SCH-5150 has no plan”
 4. **Timeline** — **Timeline lookups** from each delivery pull request. No plan frontmatter to update; do not create a synthetic plan file unless the person asks.
 5. **Honesty** — Use the same record shape as **The record**. Write `not recorded` for type, story points, branch, or pull request when evidence is missing. Say in chat that the record was built without a plan.
 
-Do not copy the repo checkout into the archive. **Weekly Done inbox automation** treats a missing plan as a hard stop: notify and do not reconstruct without a person in chat.
+Do not copy the repo checkout into the archive.
 
 ## The record
 
@@ -240,21 +240,3 @@ If `main` is not the checked-out branch, check out `main` before committing. If 
 ## In the chat
 
 Name each ticket recorded, the released date, and the record path. Say when a record was built under **Missing plan**. Name each ticket already recorded and left as it is. When a named ticket was already recorded, ask if they are sure they want it written again. Name each folder skipped, and why. When a ticket stopped for a missing plan, name it and wait for confirmation before reconstructing. After a successful commit, say that `main` was pushed.
-
-## Weekly Done inbox automation
-
-Use this when a **Cursor Automation** (or the person) says to run the weekly archive. It is the same skill with these overrides (commit and push match **Commit and push** above):
-
-**Where to run.** The automation must execute on the Mac that holds the Done inbox and skills paths (`/Users/somo.banerjee/Documents/projects/Done` and `/Users/somo.banerjee/Documents/projects/skills`). A cloud-only checkout of `somocalendly/somo-implementation-records` alone is not enough.
-
-**Schedule.** Saturday at 8:00 PM in the person’s local timezone (confirm in the Automations cron picker).
-
-**Each run:**
-
-1. Read `index.md` in `/Users/somo.banerjee/Documents/projects/skills/somo-implementation-records`.
-2. For every ticket folder in `/Users/somo.banerjee/Documents/projects/Done`, apply **Which tickets**, **Plan fallback**, **Multi-repo delivery**, and the rest of this skill.
-3. Process **all** new tickets in one run (not one chat turn per ticket). Refresh skill copies into `skills/` when the source files changed. Then commit and push per **Commit and push**.
-4. **Success notification.** Post a short summary: tickets archived (keys + released dates), tickets skipped (and why), or “no new Done tickets.” Use the automation’s Slack (or email) action.
-5. **Errors.** On failure, follow the partial-archive rule in **Commit and push**, and send a failure notification that names the ticket, the error, and asks the person to fix or run the skill interactively. A ticket that hit **Missing plan** counts as an error for automation: do not reconstruct; ask the person to add a plan or confirm no plan in chat.
-
-The automation prompt lives in `somo-implementation-records/automations/weekly-done-inbox.md` (copy into the Cursor Automation instructions).
