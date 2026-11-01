@@ -4,7 +4,9 @@ Archive a released ticket from `/Users/somo.banerjee/Documents/projects/Done` in
 
 The person asks for this after moving a ticket folder into `Done`. Example: "Run `implementation_record_skill.md`." A run with no new ticket folder still refreshes the skill copies.
 
-This skill reads the implementation plan inside the ticket folder. It does not open the cloned repo beside the plan. Story, code, proof, and people come from the plan only. It does not invent a branch or a pull request the plan does not contain. Timeline dates come from the plan first. Call GitHub or Jira only for a date the plan frontmatter still lacks, using **Timeline lookups**.
+The normal path reads the implementation plan inside the ticket folder. It does not copy a cloned repo beside the plan. Story, code, proof, and delivery metadata come from the plan first. It does not invent a branch or a pull request the plan does not contain. Timeline dates come from the plan first, then **Timeline lookups**.
+
+When there is no plan, follow **Missing plan**. Do not archive that ticket until the person confirms there is no plan. After confirmation, build the record from Jira, merged pull requests, and other evidence. Do not treat a batch “run the skill” message as confirmation.
 
 ## Where things are
 
@@ -22,7 +24,7 @@ When the index lists a ticket but `tickets/<TICKET>/implementation-record.md` is
 
 ## Which tickets
 
-Record each ticket folder in `Done` that contains `<ticket>_implementation_plan.plan.md` and whose key is not in `index.md`.
+Record each ticket folder in `Done` whose key is not in `index.md` when the folder contains `<ticket>_implementation_plan.plan.md`, or when **Missing plan** was confirmed for that key.
 
 A ticket that is already in the index has been processed. Leave its plan copy and its record as they are. Point to the index line and the linked record path.
 
@@ -31,13 +33,14 @@ When the person names a ticket that is already in the index, stop on that ticket
 Skip a folder and say why:
 
 - The folder name is not a ticket key.
-- The folder contains no implementation plan **and** no matching plan exists under **Plan fallback** below.
 - The folder contains more than one implementation plan.
 - The plan's ticket key and the folder name disagree. Name both. Do not pick one.
 
+When the folder has no implementation plan and **Plan fallback** finds none, do not skip silently. Follow **Missing plan** instead.
+
 ## What to copy
 
-Copy `<ticket>_implementation_plan.plan.md` into `tickets/<TICKET>/` into the archive. Delivery metadata in frontmatter and the opening note may be added or updated after copy, as in **Timeline lookups**. Do not change approved design sections.
+When a plan exists, copy `<ticket>_implementation_plan.plan.md` into `tickets/<TICKET>/` in the archive. Delivery metadata in frontmatter and the opening note may be added or updated after copy, as in **Timeline lookups**. Do not change approved design sections.
 
 Do not copy a cloned repo that sits beside the plan. `SCH-4248` contains `booking` and `js-packages`. `SCH-4956` contains `calendly`. `SCH-5039` contains `mf-publisher`. Those checkouts stay in `Done`.
 
@@ -48,11 +51,31 @@ When a ticket folder in `Done` has no `<ticket>_implementation_plan.plan.md`, lo
 - `/Users/somo.banerjee/Documents/projects/skills/2026 bug crush/`
 - `/Users/somo.banerjee/Documents/projects/skills/breached - 10-12-26/`
 
-Example: `sch_4682_implementation_plan.plan.md` for folder `SCH-4682`. When a file matches, copy it into the ticket folder in `Done`, then continue the run. Do not copy from `DONE/`, loose files at the skills root, or other folders. When nothing matches, skip the folder and say why.
+Example: `sch_4682_implementation_plan.plan.md` for folder `SCH-4682`. When a file matches, copy it into the ticket folder in `Done`, then continue the run. Do not copy from `DONE/`, loose files at the skills root, or other folders. When nothing matches, follow **Missing plan**.
+
+## Missing plan
+
+Use this when a ticket folder in `Done` has no `<ticket>_implementation_plan.plan.md` and **Plan fallback** found no file.
+
+**Stop first.** Do not write `implementation-record.md`, do not update `index.md`, and do not commit for that ticket. Name the folder and say the plan is missing after fallback. Ask whether the person will add a plan to the folder or confirm that **there is no plan** for this ticket.
+
+Confirmation must name the ticket or clearly mean it (“SCH-5150 has no plan”, “reconstruct 5150 without a plan”). Silence, “run the skill on Done”, or processing another ticket is not confirmation.
+
+**After explicit confirmation that there is no plan**, reconstruct the archive entry without a plan copy:
+
+1. **Jira** — One issue read for the ticket key (Atlassian MCP or the browse URL). Use summary for the record title, description and comments for **What changed**, `issueType`, and `storyPoints` when present.
+2. **Delivery** — Find merged pull request(s) for this key. Search `calendly/booking`, `calendly/mf-publisher`, `calendly/calendly`, and `calendly/js-packages` unless the Done folder or Jira names another repo. Use `gh pr list --repo <owner>/<repo> --state merged --search "<TICKET-KEY>"`. When the folder contains a repo checkout, use `git remote` and merged-PR search on that repo. List every merged PR for this key under **Multi-repo delivery**. Do not invent a PR number.
+3. **Work** — From the merged PR diff ( `gh pr diff` or `gh pr view --json files`) and, when helpful, the local checkout on the merge branch, write **Work** bullets in the usual voice. Every code-change bullet ends with a repo-relative path. When the diff is too large, summarize by area and path from the PR file list.
+4. **Timeline** — **Timeline lookups** from each delivery pull request. No plan frontmatter to update; do not create a synthetic plan file unless the person asks.
+5. **Honesty** — Use the same record shape as **The record**. Write `not recorded` for type, story points, branch, or pull request when evidence is missing. Say in chat that the record was built without a plan.
+
+Do not copy the repo checkout into the archive. **Weekly Done inbox automation** treats a missing plan as a hard stop: notify and do not reconstruct without a person in chat.
 
 ## The record
 
-Write `tickets/<TICKET>/implementation-record.md` from the plan. This file is the short answer to what the ticket was and what work shipped. A reader should not need the implementation plan or a diff.
+Write `tickets/<TICKET>/implementation-record.md` from the plan, or from **Missing plan** sources when the person confirmed there is no plan. This file is the short answer to what the ticket was and what work shipped. A reader should not need the implementation plan or a diff.
+
+When the run used a plan, copy `<ticket>_implementation_plan.plan.md` into `tickets/<TICKET>/` as in **What to copy**. When there is no plan, only `implementation-record.md` is required in that folder.
 
 Use this shape:
 
@@ -216,7 +239,7 @@ If `main` is not the checked-out branch, check out `main` before committing. If 
 
 ## In the chat
 
-Name each ticket recorded, the released date, and the record path. Name each ticket already recorded and left as it is. When a named ticket was already recorded, ask if they are sure they want it written again. Name each folder skipped, and why. After a successful commit, say that `main` was pushed.
+Name each ticket recorded, the released date, and the record path. Say when a record was built under **Missing plan**. Name each ticket already recorded and left as it is. When a named ticket was already recorded, ask if they are sure they want it written again. Name each folder skipped, and why. When a ticket stopped for a missing plan, name it and wait for confirmation before reconstructing. After a successful commit, say that `main` was pushed.
 
 ## Weekly Done inbox automation
 
@@ -232,6 +255,6 @@ Use this when a **Cursor Automation** (or the person) says to run the weekly arc
 2. For every ticket folder in `/Users/somo.banerjee/Documents/projects/Done`, apply **Which tickets**, **Plan fallback**, **Multi-repo delivery**, and the rest of this skill.
 3. Process **all** new tickets in one run (not one chat turn per ticket). Refresh skill copies into `skills/` when the source files changed. Then commit and push per **Commit and push**.
 4. **Success notification.** Post a short summary: tickets archived (keys + released dates), tickets skipped (and why), or “no new Done tickets.” Use the automation’s Slack (or email) action.
-5. **Errors.** On failure, follow the partial-archive rule in **Commit and push**, and send a failure notification that names the ticket, the error, and asks the person to fix or run the skill interactively.
+5. **Errors.** On failure, follow the partial-archive rule in **Commit and push**, and send a failure notification that names the ticket, the error, and asks the person to fix or run the skill interactively. A ticket that hit **Missing plan** counts as an error for automation: do not reconstruct; ask the person to add a plan or confirm no plan in chat.
 
 The automation prompt lives in `somo-implementation-records/automations/weekly-done-inbox.md` (copy into the Cursor Automation instructions).
