@@ -2,6 +2,7 @@
 
 Newest release first. One line per ticket: key, title, released date, pull request.
 
+- [SCH-5152](tickets/SCH-5152/implementation-record.md) — Match the booking page to the kit's breakpoints — released 2026-11-02 — https://github.com/calendly/booking/pull/555
 - [SCH-4741](tickets/SCH-4741/implementation-record.md) — Validate confirmation URLs on blur — released 2026-11-01 — https://github.com/calendly/mf-publisher/pull/4124, https://github.com/calendly/calendly/pull/40304
 - [SCH-5150](tickets/SCH-5150/implementation-record.md) — Keep managed event creates in the side panel — released 2026-10-30 — https://github.com/calendly/mf-publisher/pull/4176
 - [SCH-4255](tickets/SCH-4255/implementation-record.md) — Align the month title and the selected date with the profile back link — released 2026-10-30 — https://github.com/calendly/booking/pull/542
