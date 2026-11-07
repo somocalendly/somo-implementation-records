@@ -3,6 +3,7 @@
 Newest release first. One line per ticket: key, title, released date, pull request.
 
 - [SCH-5044](tickets/SCH-5044/implementation-record.md) — Track exits from the full-page event type editor — released 2026-11-07 — https://github.com/calendly/mf-publisher/pull/4155
+- [SCH-5148](tickets/SCH-5148/implementation-record.md) — Darken the schedule card border on hover — released 2026-11-03 — https://github.com/calendly/mf-publisher/pull/4178
 - [SCH-5152](tickets/SCH-5152/implementation-record.md) — Match the booking page to the kit's breakpoints — released 2026-11-02 — https://github.com/calendly/booking/pull/555
 - [SCH-4741](tickets/SCH-4741/implementation-record.md) — Validate confirmation URLs on blur — released 2026-11-01 — https://github.com/calendly/mf-publisher/pull/4124, https://github.com/calendly/calendly/pull/40304
 - [SCH-5150](tickets/SCH-5150/implementation-record.md) — Keep managed event creates in the side panel — released 2026-10-30 — https://github.com/calendly/mf-publisher/pull/4176
